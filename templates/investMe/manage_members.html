@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Members</title>
+</head>
+<body>
+    <h2>Manage Members</h2>
+    <ul>
+        {% for member in members %}
+            <li>
+                {{ member.name }} - <a href="{% url 'delete_member' member.id %}">Delete</a> - 
+                <a href="{% url 'update_investment' member.id %}">Update Investment</a>
+            </li>
+        {% endfor %}
+    </ul>
+    <h3>Update ROI</h3>
+    <form method="post" action="{% url 'update_roi' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Update ROI</button>
+    </form>
+</body>
+</html>

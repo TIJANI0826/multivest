@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Investments</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h2>Your Investments</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add Investment</button>
+    </form>
+    <h3>Investment History</h3>
+    <ul>
+        {% for investment in investments %}
+            <li>{{ investment.date_invested }}: {{ investment.amount }} - {{ investment.description }}</li>
+        {% endfor %}
+    </ul>
+    <h3>Monthly ROI</h3>
+    <canvas id="roiChart"></canvas>
+    <script>
+        var ctx = document.getElementById('roiChart').getContext('2d');
+        var roiChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [{% for roi in rois %}'{{ roi.month }}',{% endfor %}],
+                datasets: [{
+                    label: 'ROI',
+                    data: [{% for roi in rois %}{{ roi.roi }},{% endfor %}],
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

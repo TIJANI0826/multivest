@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'django_countries',
     'debug_toolbar',
-    'multivestshop'
+    'multivestshop',
+    'investMeapp'
 ]
 
 MIDDLEWARE = [

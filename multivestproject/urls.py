@@ -22,7 +22,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('',include('multivestshop.urls'),name='multivestshop')
+    path('',include('multivestshop.urls'),name='multivestshop'),
+    path('',include('investMeapp.urls'),name='investMeapp')
 ]
 if settings.DEBUG:
     import debug_toolbar
