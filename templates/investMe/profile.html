@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+</head>
+<body>
+    <h2>Profile</h2>
+    <p>Name: {{ member.name }}</p>
+    <p>Code: {{ member.code }}</p>
+    <p>Gender: {{ member.get_gender_display }}</p>
+    <p>Contact: {{ member.contact }}</p>
+    <p>Email: {{ member.email }}</p>
+    <p>Address: {{ member.address }}</p>
+    <p>Bank Name: {{ member.bank_name }}</p>
+    <p>Bank Account: {{ member.bank_account }}</p>
+    {% if member.image_path %}
+        <img src="{{ member.image_path.url }}" alt="{{ member.name }}">
+    {% else %}
+        <p>No image available</p>
+    {% endif %}
+    <a href="{% url 'update_profile' %}">Update Profile</a>
+</body>
+</html>

@@ -2,15 +2,21 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
-from django.conf import settings
-from django.conf.urls.static import static
 
+app_name = "investmeapp"
 urlpatterns = [
     path('signup/', views.signup, name='signup'),
     path('login/', auth_views.LoginView.as_view(), name='login'),
-    path('', views.investment, name='investment'),
+    path('investment/', views.investment, name='investment'),
+    path('profile/', views.profile, name='profile'),
+    path('update_profile/', views.update_profile, name='update_profile'),
+    path('request_withdrawal/', views.request_withdrawal, name='request_withdrawal'),
     path('manage_members/', views.manage_members, name='manage_members'),
     path('delete_member/<int:member_id>/', views.delete_member, name='delete_member'),
     path('update_investment/<int:investment_id>/', views.update_investment, name='update_investment'),
     path('update_roi/', views.update_roi, name='update_roi'),
-]+ static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    path('manage_withdrawals/', views.manage_withdrawals, name='manage_withdrawals'),
+    path('approve_withdrawal/<int:withdrawal_id>/', views.approve_withdrawal, name='approve_withdrawal'),
+    path('paystack-webhook/', views.paystack_webhook, name='paystack_webhook'),
+
+]

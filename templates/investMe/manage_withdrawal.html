@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Withdrawals</title>
+</head>
+<body>
+    <h2>Manage Withdrawals</h2>
+    <ul>
+        {% for withdrawal in withdrawals %}
+            <li>
+                {{ withdrawal.member.name }} - {{ withdrawal.amount }} - 
+                <a href="{% url 'approve_withdrawal' withdrawal.id %}">Approve</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

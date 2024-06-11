@@ -1,13 +1,20 @@
 from django import forms
 from django_countries.fields import CountryField
 from django_countries.widgets import CountrySelectWidget
-
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
 
 PAYMENT_CHOICES = (
     ('S', 'Stripe'),
     ('P', 'PayPal')
 )
 
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(max_length=254, help_text='Required. Inform a valid email address.')
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2')
 
 class CheckoutForm(forms.Form):
     shipping_address = forms.CharField(required=False)
@@ -56,6 +63,8 @@ class RefundForm(forms.Form):
 
 
 class PaymentForm(forms.Form):
-    stripeToken = forms.CharField(required=False)
-    save = forms.BooleanField(required=False)
-    use_default = forms.BooleanField(required=False)
+    amount = forms.DecimalField(max_digits=10, decimal_places=2)
+    # stripeToken = forms.CharField(required=False)
+    # save = forms.BooleanField(required=False)
+    # use_default = forms.BooleanField(required=False)
+    fields = ['amount']

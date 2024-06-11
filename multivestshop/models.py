@@ -7,6 +7,10 @@ from django.db import models
 from django.db.models import Sum
 from django.shortcuts import reverse
 from django_countries.fields import CountryField
+from django.utils import timezone
+from PIL import Image
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 CATEGORY_CHOICES = (
@@ -73,6 +77,14 @@ class Item(models.Model):
         })
     def get_category(self):
         return self.category.name
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.image:
+            img = Image.open(self.image.path)
+            if img.height > 300 or img.width > 300:
+                new_img = (300, 300)
+                img.thumbnail(new_img)
+                img.save(self.image.path)
 
 
 class OrderItem(models.Model):

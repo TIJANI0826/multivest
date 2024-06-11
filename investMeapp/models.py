@@ -1,8 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from PIL import Image
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 class Members(models.Model):
     MALE = 'Male'
@@ -18,27 +17,28 @@ class Members(models.Model):
         (ACTIVE, 'Active'),
         (INACTIVE, 'Inactive'),
     ]
-    
+
     code = models.CharField(max_length=250)
     first_name = models.CharField(max_length=250)
     middle_name = models.CharField(max_length=250, blank=True, null=True)
     last_name = models.CharField(max_length=250)
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default=MALE)
     contact = models.CharField(max_length=250)
-    email = models.EmailField(max_length=250,unique=True)
+    email = models.EmailField(max_length=250)
     address = models.TextField(blank=True, null=True)
-    image_path = models.ImageField(upload_to="members/",null=True,blank=True)
+    image_path = models.ImageField(upload_to="members/", blank=True, null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=ACTIVE)
     delete_flag = models.IntegerField(default=0)
     date_added = models.DateTimeField(default=timezone.now)
     date_created = models.DateTimeField(auto_now=True)
+    bank_account = models.CharField(max_length=250, blank=True, null=True)
+    bank_name = models.CharField(max_length=250, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "List of Members"
 
     def __str__(self):
-        #return f"{self.code} - {self.first_name}{' ' + self.middle_name if self.middle_name else ''} {self.last_name}"
-        return self.email
+        return f"{self.code} - {self.first_name}{' ' + self.middle_name if self.middle_name else ''} {self.last_name}"
 
     def name(self):
         return f"{self.first_name}{' ' + self.middle_name if self.middle_name else ''} {self.last_name}"
@@ -69,3 +69,12 @@ class MonthlyROI(models.Model):
 
     def __str__(self):
         return f"{self.investment.member.name()} - {self.month.strftime('%B %Y')} - ROI: {self.roi}"
+
+class WithdrawalRequest(models.Model):
+    member = models.ForeignKey(Members, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    date_requested = models.DateTimeField(default=timezone.now)
+    approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.member.name()} - {self.amount} - {'Approved' if self.approved else 'Pending'}"

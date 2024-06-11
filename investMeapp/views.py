@@ -1,11 +1,20 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from .forms import SignUpForm, InvestmentForm, ROIForm
-from .models import Members, Investment, MonthlyROI
-from django.utils import timezone
-from datetime import datetime, timedelta
+from .forms import SignUpForm, InvestmentForm, ROIForm, MemberForm, WithdrawalRequestForm
+from .models import Members, Investment, MonthlyROI, WithdrawalRequest
+from django.core.mail import send_mail
+from paystackapi.paystack import Paystack
+from paystackapi.transaction import Transaction
+from django.conf import settings
+from paystackapi.transfer import Transfer
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
+import json
+paystack_secret_key = 'your_paystack_secret_key'
+paystack = Paystack(secret_key=paystack_secret_key)
 
 def signup(request):
     if request.method == 'POST':
@@ -19,7 +28,7 @@ def signup(request):
             return redirect('investment')
     else:
         form = SignUpForm()
-    return render(request, 'signup.html', {'form': form})
+    return render(request, 'investMeapp/signup.html', {'form': form})
 
 @login_required
 def investment(request):
@@ -38,7 +47,44 @@ def investment(request):
     else:
         form = InvestmentForm()
 
-    return render(request, 'investment.html', {'form': form, 'investments': investments, 'rois': rois})
+    return render(request, 'investMeapp/investment.html', {'form': form, 'investments': investments, 'rois': rois})
+
+@login_required
+def profile(request):
+    member = Members.objects.get(email=request.user.email)
+    return render(request, 'profile.html', {'member': member})
+
+@login_required
+def update_profile(request):
+    member = Members.objects.get(email=request.user.email)
+    if request.method == 'POST':
+        form = MemberForm(request.POST, request.FILES, instance=member)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = MemberForm(instance=member)
+    return render(request, 'update_profile.html', {'form': form})
+
+@login_required
+def request_withdrawal(request):
+    member = Members.objects.get(email=request.user.email)
+    if request.method == 'POST':
+        form = WithdrawalRequestForm(request.POST)
+        if form.is_valid():
+            withdrawal_request = form.save(commit=False)
+            withdrawal_request.member = member
+            withdrawal_request.save()
+            send_mail(
+                'New Withdrawal Request',
+                f'Member {member.name()} has requested a withdrawal of {withdrawal_request.amount}.',
+                'from@example.com',
+                ['admin@example.com'],
+            )
+            return redirect('investment')
+    else:
+        form = WithdrawalRequestForm()
+    return render(request, 'request_withdrawal.html', {'form': form})
 
 @user_passes_test(lambda u: u.is_superuser)
 def manage_members(request):
@@ -48,15 +94,12 @@ def manage_members(request):
 @user_passes_test(lambda u: u.is_superuser)
 def delete_member(request, member_id):
     member = Members.objects.get(id=member_id)
-    user = User.objects.get(email=member.email)
     member.delete()
-    user.delete()
     return redirect('manage_members')
 
 @user_passes_test(lambda u: u.is_superuser)
 def update_investment(request, investment_id):
-    member = Members.objects.get(id=investment_id)
-    investment = Investment.objects.get(member=member)
+    investment = Investment.objects.get(id=investment_id)
     if request.method == 'POST':
         form = InvestmentForm(request.POST, instance=investment)
         if form.is_valid():
@@ -83,3 +126,94 @@ def update_roi(request):
     else:
         form = ROIForm()
     return render(request, 'update_roi.html', {'form': form})
+
+@user_passes_test(lambda u: u.is_superuser)
+def manage_withdrawals(request):
+    withdrawals = WithdrawalRequest.objects.filter(approved=False)
+    return render(request, 'manage_withdrawals.html', {'withdrawals': withdrawals})
+
+@user_passes_test(lambda u: u.is_superuser)
+def approve_withdrawal(request, withdrawal_id):
+    withdrawal = get_object_or_404(WithdrawalRequest, id=withdrawal_id)
+    withdrawal.approved = True
+    withdrawal.save()
+    # Integrate Paystack payment to send money to member's bank account
+    send_money_to_bank_account(withdrawal)
+    return redirect('manage_withdrawals')
+
+def send_money_to_bank_account(withdrawal):
+    member = withdrawal.member
+    bank_account = member.bank_account
+    bank_name = member.bank_name
+    amount = withdrawal.amount
+
+    BANK_CODES = {
+        'GTBank': '058',
+        'Access Bank': '044',
+        # Add other banks...
+    }
+
+    bank_code = BANK_CODES.get(bank_name)
+    if not bank_code:
+        send_mail(
+            'Withdrawal Failed',
+            f'Bank name {bank_name} is not supported. Please contact support.',
+            'from@example.com',
+            [member.email],
+        )
+        return
+
+    # Create recipient code
+    response = paystack.transferrecipient.create(
+        type="nuban",
+        name=member.name(),
+        account_number=bank_account,
+        bank_code=bank_code,
+        currency="NGN"
+    )
+
+    if response['status']:
+        recipient_code = response['data']['recipient_code']
+
+        # Initialize transfer
+        transfer_response = Transfer.initiate(
+            source="balance",
+            reason=f"Withdrawal for {member.name()}",
+            amount=int(amount * 100),
+            recipient=recipient_code
+        )
+
+        if transfer_response['status']:
+            # Transfer successful
+            send_mail(
+                'Withdrawal Processed',
+                f'Your withdrawal request of {amount} has been processed successfully.',
+                'from@example.com',
+                [member.email],
+            )
+        else:
+            # Handle transfer error
+            send_mail(
+                'Withdrawal Failed',
+                f'Your withdrawal request of {amount} failed. Please contact support.',
+                'from@example.com',
+                [member.email],
+            )
+    else:
+        # Handle recipient creation error
+        send_mail(
+            'Withdrawal Failed',
+            f'Your withdrawal request of {amount} failed. Please contact support.',
+            'from@example.com',
+            [member.email],
+        )
+
+@csrf_exempt
+def paystack_webhook(request):
+    # Handle Paystack webhook notifications
+    event = json.loads(request.body)
+    if event['event'] == 'transfer.success':
+        reference = event['data']['reference']
+        # Update your database with the transfer success status
+        # Example: mark the withdrawal as completed
+    return JsonResponse({'status': 'success'})

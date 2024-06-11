@@ -11,15 +11,37 @@ from django.shortcuts import redirect
 from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from django.views.generic import ListView, DetailView, View
-
-from .forms import CheckoutForm, CouponForm, RefundForm, PaymentForm
+from django.contrib.auth import login, authenticate
+from paystackapi.transfer import Transfer
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.urls import reverse
+import json
+from .forms import  SignUpForm,CheckoutForm, CouponForm, RefundForm, PaymentForm
 from .models import Item, OrderItem, Order, Address, Payment, Coupon, Refund, UserProfile
+from django.http import JsonResponse, HttpResponse
+from paystackapi.transaction import Transaction
+from django.contrib.auth.models import User
+from paystackapi.paystack import Paystack
+
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
+paystack_secret_key = settings.PAYSTACK_SECRET_KEY
+paystack = Paystack(secret_key=paystack_secret_key)
 def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request,user,backend='django.contrib.auth.backends.ModelBackend')
+            return redirect('multivestshop:home')
+    else:
+        form = SignUpForm()
+    return render(request, 'account/signup.html', {'form': form})
 
 def products(request):
     context = {
@@ -189,21 +211,91 @@ class CheckoutView(View):
                     else:
                         messages.info(
                             self.request, "Please fill in the required billing address fields")
+                return redirect('multivestshop:initialize_payment')
+                # payment_option = form.cleaned_data.get('payment_option')
 
-                payment_option = form.cleaned_data.get('payment_option')
-
-                if payment_option == 'S':
-                    return redirect('multivestshop:payment', payment_option='stripe')
-                elif payment_option == 'P':
-                    return redirect('multivestshop:payment', payment_option='paypal')
-                else:
-                    messages.warning(
-                        self.request, "Invalid payment option selected")
-                    return redirect('multivestshop:checkout')
+                # if payment_option == 'S':
+                #     return redirect('multivestshop:payment', payment_option='stripe')
+                # elif payment_option == 'P':
+                #     return redirect('multivestshop:payment', payment_option='paypal')
+                # else:
+                #     messages.warning(
+                #         self.request, "Invalid payment option selected")
+                #     return redirect('multivestshop:checkout')
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
             return redirect("multivestshop:order-summary")
 
+@login_required
+def initialize_payment(request):
+    order = Order.objects.get(user=request.user)
+    if request.method == 'POST':
+        form = PaymentForm(request.POST)
+        if form.is_valid():
+            amount = form.cleaned_data['amount']
+            email = request.user.email
+            reference = f"{order.id}_{int(amount * 100)}_{request.user.id}"
+            
+            response = Transaction.initialize(
+                reference=reference,
+                amount=int(amount * 100),  # Paystack expects amount in kobo
+                email=email,
+                callback_url=request.build_absolute_uri(reverse('multivestshop:payment_callback'))
+            )
+            
+            if response['status']:
+                auth_url = response['data']['authorization_url']
+                return redirect(auth_url)
+            else:
+                return HttpResponse("Payment initialization failed. Please try again.")
+    else:
+        form = PaymentForm()
+
+    return render(request, 'initialize_payment.html', {'form': form})
+
+@csrf_exempt
+def payment_callback(request):
+    reference = request.GET.get('reference')
+    print(reference)
+    if reference:
+    # if event['event'] == 'charge.success':
+    #     reference = event['data']['reference']
+    #     amount = event['data']['amount']
+        order_id, amount_kobo, user_id = reference.split('_')
+        
+        order = Order.objects.get(id=order_id)
+        order.ordered = True
+        # Investment.objects.create(
+        #     member=member,
+        #     amount=int(amount_kobo) / 100,
+        #     initial_amount=int(amount_kobo) / 100,
+        #     description='Payment via Paystack'
+        # )
+        
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'}, status=400)
+
+@csrf_exempt
+def paystack_webhook(request):
+    if request.method == 'POST':
+        event = json.loads(request.body)
+        
+        if event['event'] == 'charge.success':
+            reference = event['data']['reference']
+            amount = event['data']['amount']
+            member_id, amount_kobo, user_id = reference.split('_')
+            
+            # member = Members.objects.get(id=member_id)
+            # Investment.objects.create(
+            #     member=member,
+            #     amount=int(amount_kobo) / 100,
+            #     initial_amount=int(amount_kobo) / 100,
+            #     description='Payment via Paystack'
+            # )
+            
+            return JsonResponse({'status': 'success'})
+        
+    return JsonResponse({'status': 'failed'}, status=400)
 
 class PaymentView(View):
     def get(self, *args, **kwargs):
