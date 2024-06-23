@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section data-bs-version="5.1" class="header18 cid-ug3d4Kvstw mbr-fullscreen" data-bg-video="https://www.youtube.com/embed/U1c3RBjXdl0?autoplay=1&amp;loop=1&amp;playlist=U1c3RBjXdl0&amp;t=20&amp;mute=1&amp;playsinline=1&amp;controls=0&amp;showinfo=0&amp;autohide=1&amp;allowfullscreen=true&amp;mode=transparent" id="hero-15-ug3d4Kvstw">
+    <div class="mbr-overlay" style="opacity: 0.5; background-color: rgb(0, 0, 0);"></div>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="content-wrap col-12 col-md-12">
+          <h1 class="mbr-section-title mbr-fonts-style mbr-white mb-4 display-1">
+            <strong>Grow Together</strong>
+          </h1>
+          
+          <p class="mbr-fonts-style mbr-text mbr-white mb-4 display-7">Join the Delainah Optimah revolution and sow the seeds of success in our vibrant community.</p>
+          <div class="mbr-section-btn">
+            <a class="btn btn-white-outline display-7" href="/">Explore More</a>
+          </div>
+        </div>
+      </div>
+    </div>
+</section>
+
+<section data-bs-version="5.1" class="form1 cid-ug3d4KAWF3" id="call-to-action-12-ug3d4KAWF3">
+  <div class="container">
+    <div class="row justify-content-center">
+      {% if messages %}
+
+      {% for message in messages %}
+      <div id="message" class="container text-center">
+      <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %} role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span></button>
+          {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}{% endif %}
+          {{ message }}
+      </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+    
+    <div class="container">
+        <div class="row content-wrapper justify-content-center" action="{% url 'mobiriseapp:login' %}>
+            <div class="col-lg-7 mbr-form">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <h5 class="mbr-section-title mbr-fonts-style mb-5 display-2">
+                        <strong>Sign in</strong>
+                    </h5>
+                </div>
+               
+            
+                {% endif %}
+                <div class="text-wrapper align-left" data-form-type="formoid">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                         <div class="row">
+                          <div data-for="username" class="col-lg-6 col-md-6 col-sm-12 form-group">
+                              <label for="id_username">Username:</label>
+                              <input type="text" name="username" maxlength="300" required id="id_username" placeholder="username" data-form-field="username" class="form-control display-1" value="">
+                          </div>
+                          <div data-for="password" class="col-lg-6 col-md-6 col-sm-12 form-group">
+                            <label for="id_password">Password:</label>
+                            <input type="password" name="password" placeholder="password" data-form-field="password" class="form-control display-1" value="" id="password-call-to-action-12-ug3d4KAWF3">
+                          </div>
+                          <div class="col-auto mbr-section-btn">
+                              <button type="submit" class="w-100 btn btn-primary display-7">Sign in</button>
+                          </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock content %}

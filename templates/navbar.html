@@ -1,6 +1,10 @@
+{% load static %}
+
 {% load cart_template_tags %}
+
 <!-- Navbar start -->
 <div class="container-fluid fixed-top">
+    
     <div class="container topbar bg-primary d-none d-lg-block">
         <div class="d-flex justify-content-between">
             <div class="top-info ps-2">
@@ -16,7 +20,12 @@
     </div>
     <div class="container px-0">
         <nav class="navbar navbar-light bg-white navbar-expand-xl">
-            <a href="/" class="navbar-brand"><h1 class="text-primary display-6">Fruitables</h1></a>
+            <div class="py-2 px-3">
+                <a href="/" class="navbar-brand">
+                        <!-- <img src="{% static 'img/delainah.png' %}" alt="" class="img-fluid position-relative" height="50"> -->
+                        <h1 class="text-primary display-24">DELAINAH OPTIMAH</h1>
+                </a>
+            </div>
             <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="fa fa-bars text-primary"></span>
             </button>
@@ -36,12 +45,17 @@
                         <i class="fas fa-user fa-2x"></i>
                     </a>
                     {% else %}
-                    </a>
                     <a href="{% url 'account_login' %}" class="nav-item nav-link">
                         Login
                     </a>
                     <a href="{% url 'multivestshop:signup' %}" class="nav-item nav-link">
                             Signup
+                    </a>
+                    <a href="{% url 'investmeapp:login' %}" class="nav-item nav-link">
+                        Member Login
+                    </a>
+                    <a href="{% url 'investmeapp:signup' %}" class="nav-item nav-link">
+                            Member Signup
                     </a>
                 </div>
                 {% endif %}

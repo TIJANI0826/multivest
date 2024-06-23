@@ -1,14 +1,21 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Update Profile</title>
-</head>
-<body>
-    <h2>Update Profile</h2>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Update</button>
-    </form>
-</body>
-</html>
+{% extends 'mobirise/mobirisbase.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<main class="py-5">
+    <div class="container-fluid page-header py-5"></div>
+    
+    <div class="container-fluid py-5">
+        <div class="container py-5">        
+            <div class="row g-5">
+                <h2>Update Profile</h2>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main> 
+{% endblock content %}
+    

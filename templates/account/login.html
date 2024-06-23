@@ -34,18 +34,46 @@
           {% include "socialaccount/snippets/login_extra.html" %}
 
           {% else %}
-          <p>{% blocktrans %}If you have not created an account yet, then please
-          <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+          <p>If you have not created an account yet, then please
+          <a href="{% url 'investmeapp:signup' %}">sign up as a Delainah Optimah member</a></p> OR
+          <p>
+          <a href="{% url 'multivestshop:signup' %}">sign up as a user</a> .</p>
           {% endif %}
 
           <form class="login" method="POST" action="{% url 'account_login' %}">
             {% csrf_token %}
-            {{ form|crispy }}
+            <div id="div_id_login" class="form-group form-item"> 
+              <label for="id_login" class="col-form-label form-label requiredField">
+              Username
+              <span class="asteriskField">*</span> 
+              </label> 
+              <div class=""> 
+                <input type="text" name="login" placeholder="Username" autocomplete="username" maxlength="150" class="textinput form-control" required id="id_login">
+              </div> 
+            </div> 
+            <div id="div_id_password" class="form-group form-item"> 
+              <label for="id_password" class="col-form-label form-label requiredField">
+              Password<span class="asteriskField">*</span> 
+              </label> 
+              <div class=""> 
+                <input type="password" name="password" placeholder="Password" autocomplete="current-password" class="passwordinput form-control" required id="id_password"> 
+                <small id="hint_id_password" class="form-text text-muted"><a href="/accounts/password/reset/">Forgot your password?</a></small> 
+              </div> 
+            </div> 
+            
+            <div id="div_id_remember" class="form-check"> 
+                <label for="id_remember" class="form-check-label"> </label>
+                <input type="checkbox" name="remember" class="checkboxinput form-check-input" id="id_remember">
+                    Remember Me
+            </div>
+
             {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
             {% endif %}
             <a class="btn btn-default" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
-            <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+            <div class="row g-4 text-center align-items-center justify-content-center pt-4">
+              <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">{% trans "Sign In" %}</button>
+            </div>
           </form>
           </div>
         </div>

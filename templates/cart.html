@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'mobirise/mobirisbase.html' %}
 
 {% block content %}
 
@@ -7,6 +7,18 @@
 
 <!-- Cart Page Start -->
 <div class="container-fluid py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            {% for message in messages %}
+                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              {% endfor %}
+        </div>
+    </div>
     <div class="container py-5">
         <div class="table-responsive">
             <table class="table">
@@ -38,14 +50,14 @@
                             <div class="input-group quantity mt-4" style="width: 100px;">
                                 <div class="input-group-btn">
                                     <a class="btn btn-sm btn-plus rounded-circle bg-light border" href="{% url 'multivestshop:remove-single-item-from-cart' order_item.item.slug %}">
-                                    <i class="fa fa-minus"></i>
+                                    <i class="fa fa-minus fa-2x"></i>
                                     </a>
                                 </div>
                                 <input type="text" class="form-control form-control-sm text-center border-0" value="{{ order_item.quantity }}">
                                 
                                 <div class="input-group-btn">
                                     <a class="btn btn-sm btn-plus rounded-circle bg-light border" href="{% url 'multivestshop:add-to-cart' order_item.item.slug %}">
-                                        <i class="fa fa-plus"></i>
+                                        <i class="fa fa-plus fa-2x"></i>
                                     </a>
                                 </div>
                             </div>
@@ -74,7 +86,7 @@
                     </tr>
                     <tr>
                         <td colspan="5">
-                        <a class='btn btn-primary float-right' href='/'>Continue shopping</a>
+                        <a class='btn btn-primary float-right' href="{% url 'multivestshop:home' %}">Continue shopping</a>
                         </td>
                     </tr>
                     {% endfor %}
@@ -106,9 +118,9 @@
                         <p class="mb-0 pe-4">${{ object.get_total }}</p>
                     </div>
                     <a class="btn btn-warning border-secondary rounded-pill px-4 py-3 text-white text-uppercase mb-4 ms-4"
-                    href="/checkout/" type="button">Proceed Checkout</a>
+                    href="{% url 'multivestshop:checkout' %}" type="button">Proceed Checkout</a>
                     <a class="btn btn-primary border-secondary  rounded-pill px-4 py-3 text-white text-uppercase mb-4 ms-4"
-                    href="/" type="button">Continue shopping</a>
+                    href="{% url 'multivestshop:home' %}" type="button">Continue shopping</a>
                 </div>
             </div>
         </div>

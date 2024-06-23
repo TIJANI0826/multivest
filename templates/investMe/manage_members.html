@@ -1,23 +1,30 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manage Members</title>
-</head>
-<body>
-    <h2>Manage Members</h2>
-    <ul>
-        {% for member in members %}
-            <li>
-                {{ member.name }} - <a href="{% url 'delete_member' member.id %}">Delete</a> - 
-                <a href="{% url 'update_investment' member.id %}">Update Investment</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <h3>Update ROI</h3>
-    <form method="post" action="{% url 'update_roi' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Update ROI</button>
-    </form>
-</body>
-</html>
+{% extends 'mobirise/mobirisbase.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<main class="py-5">
+    <div class="container-fluid page-header py-5"></div>
+    
+    <div class="container-fluid py-5">
+        <div class="container py-5">        
+            <div class="row g-5">
+                <h2>Manage Members</h2>
+                <ul>
+                    {% for member in members %}
+                        <li>
+                            {{ member.name }} - <a href="{% url 'delete_member' member.id %}">Delete</a> - 
+                            <a href="{% url 'update_investment' member.id %}">Update Investment</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <h3>Update ROI</h3>
+                <form method="post" action="{% url 'update_roi' %}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Update ROI</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main> 
+{% endblock content %}
+

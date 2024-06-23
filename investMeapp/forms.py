@@ -10,6 +10,11 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ('username', 'email', 'first_name', 'last_name','password1', 'password2')
 
+class LoginForm(UserCreationForm):
+
+    class Meta:
+        model = User
+        fields = ('username', 'password')
 
 class InvestmentForm(forms.ModelForm):
     class Meta:

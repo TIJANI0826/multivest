@@ -1,25 +1,35 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Investments</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
-<body>
-    <h2>Your Investments</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Add Investment</button>
-    </form>
-    <h3>Investment History</h3>
-    <ul>
-        {% for investment in investments %}
-            <li>{{ investment.date_invested }}: {{ investment.amount }} - {{ investment.description }}</li>
-        {% endfor %}
-    </ul>
-    <h3>Monthly ROI</h3>
-    <canvas id="roiChart"></canvas>
-    <script>
+{% extends 'mobirise/mobirisbase.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<main class="py-5">
+    <div class="container-fluid page-header py-5"></div>
+    
+    <div class="container-fluid py-5">
+        <div class="container py-5">        
+            <div class="row g-5">
+                <h2>Your Investments</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit">Add Investment</button>
+                </form>
+                <h3>Investment History</h3>
+                <ul>
+                    {% for investment in investments %}
+                        <li>{{ investment.date_invested }}: {{ investment.amount }} - {{ investment.description }}</li>
+                    {% endfor %}
+                </ul>
+                <h3>Monthly ROI</h3>
+                <canvas id="roiChart"></canvas>
+            </div>
+        </div>
+    </div>
+</main> 
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
         var ctx = document.getElementById('roiChart').getContext('2d');
         var roiChart = new Chart(ctx, {
             type: 'line',
@@ -40,6 +50,6 @@
                 }
             }
         });
-    </script>
-</body>
-</html>
+</script>
+
+{% endblock extra_scripts %}

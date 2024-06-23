@@ -23,12 +23,24 @@ from django.http import JsonResponse, HttpResponse
 from paystackapi.transaction import Transaction
 from django.contrib.auth.models import User
 from paystackapi.paystack import Paystack
+from investMeapp.models import Members
 
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 paystack_secret_key = settings.PAYSTACK_SECRET_KEY
 paystack = Paystack(secret_key=paystack_secret_key)
+
+def is_member(request):
+    if request.user.id == None:
+        return False
+    else:
+        if Members.objects.filter(email=request.user.email):
+            return True
+        else:
+            return False
+        
+
 def create_ref_code():
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=20))
 
@@ -36,16 +48,25 @@ def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
-            user = form.save()
-            login(request,user,backend='django.contrib.auth.backends.ModelBackend')
-            return redirect('multivestshop:home')
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+            user = form.save(commit=True)
+            # user = User.objects.get(username = username)
+            user = authenticate(request,username=username,password=password1)
+            if user is not None:
+                login(request,user,backend='django.contrib.auth.backends.ModelBackend')
+                return redirect('multivestshop:home')
+            else:
+                messages.warning(request, "Invalid details")    
     else:
         form = SignUpForm()
     return render(request, 'account/signup.html', {'form': form})
 
 def products(request):
     context = {
-        'items': Item.objects.all()
+        'items': Item.objects.all(), 'is_member' : is_member(request)
     }
     return render(request, "products.html", context)
 
@@ -59,6 +80,12 @@ def is_valid_form(values):
 
 
 class CheckoutView(View):
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context["is_member"] = is_member(self.request)
+        return context
     def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
@@ -211,7 +238,22 @@ class CheckoutView(View):
                     else:
                         messages.info(
                             self.request, "Please fill in the required billing address fields")
-                return redirect('multivestshop:initialize_payment')
+                amount = order.get_total()
+                email = self.request.user.email
+                reference = f"{order.id}_{int(amount * 100)}_{self.request.user.id}"
+                response = Transaction.initialize(
+                    reference=reference,
+                    amount=int(amount * 100),  # Paystack expects amount in kobo
+                    email=email,
+                    callback_url=self.request.build_absolute_uri(reverse('multivestshop:payment_callback'))
+                )
+                
+                if response['status']:
+                    auth_url = response['data']['authorization_url']
+                    return redirect(auth_url)
+                else:
+                    return HttpResponse("Payment initialization failed. Please try again.")
+                # return redirect('multivestshop:initialize_payment')
                 # payment_option = form.cleaned_data.get('payment_option')
 
                 # if payment_option == 'S':
@@ -263,8 +305,25 @@ def payment_callback(request):
     #     amount = event['data']['amount']
         order_id, amount_kobo, user_id = reference.split('_')
         
-        order = Order.objects.get(id=order_id)
+        # order = Order.objects.get(id=order_id)
+        # order.ordered = True
+        order = Order.objects.get(user=request.user, ordered=False)
+        payment = Payment()
+        payment.user = request.user
+        payment.amount = order.get_total()
+        payment.save()
+
+        # assign the payment to the order
+
+        order_items = order.items.all()
+        order_items.update(ordered=True)
+        for item in order_items:
+            item.save()
+
         order.ordered = True
+        order.payment = payment
+        order.ref_code = reference
+        order.save()
         # Investment.objects.create(
         #     member=member,
         #     amount=int(amount_kobo) / 100,
@@ -272,8 +331,12 @@ def payment_callback(request):
         #     description='Payment via Paystack'
         # )
         
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'failed'}, status=400)
+        response = JsonResponse({'status': 'success'})
+        messages.success(request, response)
+        return redirect("multivestshop:home")
+    fail_response = JsonResponse({'status': 'failed'}, status=400)
+    messages.warning(request,fail_response)
+    return redirect("multivestshop:checkout")
 
 @csrf_exempt
 def paystack_webhook(request):
@@ -441,8 +504,32 @@ class HomeView(ListView):
     paginate_by = 10
     template_name = "home.html"
 
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context["is_member"] = is_member(self.request)
+        return context
+
+class indexView(ListView):
+    model = Item
+    paginate_by = 10
+    template_name = "mobirise/index.html"
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context["is_member"] = is_member(self.request)
+        return context
 
 class OrderSummaryView(LoginRequiredMixin, View):
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context["is_member"] = is_member(self.request)
+        return context
     def get(self, *args, **kwargs):
         try:
             order = Order.objects.get(user=self.request.user, ordered=False)
@@ -452,12 +539,19 @@ class OrderSummaryView(LoginRequiredMixin, View):
             return render(self.request, 'cart.html', context)
         except ObjectDoesNotExist:
             messages.warning(self.request, "You do not have an active order")
-            return redirect("/")
+            return redirect("multivestshop:home")
 
 
 class ItemDetailView(DetailView):
     model = Item
     template_name = "product2.html"
+
+    def get_context_data(self, **kwargs):
+        # Call the base implementation first to get a context
+        context = super().get_context_data(**kwargs)
+        # Add in a QuerySet of all the books
+        context["is_member"] = is_member(self.request)
+        return context
 
 
 @login_required

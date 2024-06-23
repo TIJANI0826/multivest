@@ -25,7 +25,7 @@ class Members(models.Model):
     gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default=MALE)
     contact = models.CharField(max_length=250)
     email = models.EmailField(max_length=250)
-    address = models.TextField(blank=True, null=True)
+    address = models.TextField(blank=True, null=True, unique=True)
     image_path = models.ImageField(upload_to="members/", blank=True, null=True)
     status = models.IntegerField(choices=STATUS_CHOICES, default=ACTIVE)
     delete_flag = models.IntegerField(default=0)

@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from multivestshop.views import indexView
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', indexView.as_view(),name='index' ),
     path('accounts/', include('allauth.urls')),
-    path('',include('multivestshop.urls'),name='multivestshop'),
-    path('',include('investMeapp.urls'),name='investMeapp')
+    path('multivest/',include('multivestshop.urls'),name='multivestshop'),
+    path('invest/',include('investMeapp.urls'),name='investMeapp')
 ]
 if settings.DEBUG:
     import debug_toolbar

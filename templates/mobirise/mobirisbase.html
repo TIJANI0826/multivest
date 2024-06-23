@@ -1,0 +1,244 @@
+{% load static %}
+{% load cart_template_tags %}
+
+<!DOCTYPE html>
+<html >
+<head>
+  <!-- Site made with Mobirise Online Website Builder v5.9.13, https://a.mobirise.com -->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Mobirise v5.9.13, a.mobirise.com">
+  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1">
+  <link rel="shortcut icon" href="{% static 'mobirise/images/delainah.png' %}" type="image/x-icon">
+  <meta name="description" content="Welcome to our agricultural cooperative website, where members can access exclusive products and services through our online shop.">
+  <title>Agricultural Cooperative Membership</title>
+  <link rel="stylesheet" href="{% static 'mobirise/web/assets/mobirise-icons2/mobirise2.css' %}">
+  <link rel="stylesheet" href="{% static 'mobirise/bootstrap/css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'mobirise/bootstrap/css/bootstrap-grid.min.css' %}">
+  <link rel="stylesheet" href="{% static 'mobirise/bootstrap/css/bootstrap-reboot.min.css' %}">
+  <link rel="stylesheet" href="{% static 'mobirise/parallax/jarallax.css' %}">
+  <link rel="stylesheet" href="{% static 'mobirise/dropdown/css/style.css' %}">
+  <link rel="stylesheet" href="{% static 'mobirise/socicon/css/styles.css' %}">
+  <link rel="stylesheet" href="{% static 'mobirise/theme/css/style.css' %}">
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;700&display=swap&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;700&display=swap&display=swap"></noscript>
+  <link rel="stylesheet" href="{% static 'mobirise/css/mbr-additional.css' %}" type="text/css">
+  <!-- Icon Font Stylesheet -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <section data-bs-version="5.1" class="menu menu2 cid-ug3d4KuDco" once="menu" id="menu-5-ug3d4KuDco">
+	
+
+        <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
+            <div class="container">
+                <div class="navbar-brand">
+                    <span class="navbar-logo">
+                        <a href="/">
+                            <img src="{% static 'mobirise/images/delainah.png' %}" alt="Mobirise Website Builder" style="height: 4.3rem;">
+                        </a>
+                    </span>
+                    <span class="navbar-caption-wrap"><a class="navbar-caption text-black display-4" href="/">Delainah Optimah</a></span>
+                </div>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true">
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link link text-black display-4" href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link text-black display-4" href="{% url 'investmeapp:profile' %}">Profile</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'multivestshop:order-summary' %}" class="nav-link link text-black display-4 position-relative me-4 my-auto">
+                                    <i class="fa fa-shopping-bag fa-2x"></i>
+                                    <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">{{ request.user|cart_item_count }}</span>
+                                </a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link link text-black display-4" href="{% url 'account_logout' %}">Log out</a>
+                            </li>
+                            {% if is_member %}
+                            <li class="nav-item">
+                                <a class="nav-link link text-black display-4" href="{% url 'investmeapp:investment' %}">Membership</a>
+                            </li>
+                            {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link link text-black display-4" href="{% url 'investmeapp:signup' %}">Become a member</a>
+                            </li>
+                            {% endif %}
+                                           
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link link text-black display-4" href="{% url 'investmeapp:investment' %}">Membership</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link link text-black display-4" href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link link text-black display-4" href="/">Events</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link link text-black display-4" href="{% url 'account_login' %}">Sign in</a>
+                        </li>
+                        
+                        {% endif %}
+                    </ul>
+
+                    {% if is_member %}
+                    
+                    {% else %}
+                    <div class="navbar-buttons mbr-section-btn">
+                        <a class="btn btn-primary display-4" href="{% url 'investmeapp:signup' %}">Join Now</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </section>
+    {% block content %}
+    {% endblock content %}
+    <section data-bs-version="5.1" class="contacts02 map1 cid-ug3d4KCAh2" id="contacts-2-ug3d4KCAh2">
+
+        
+
+        
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-12 content-head">
+                    <div class="mbr-section-head mb-5">
+                        <h3 class="mbr-section-title mbr-fonts-style align-center mb-0 display-2">
+                            <strong>Reach Out</strong>
+                        </h3>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="card col-12 col-md-12 col-lg-6">
+                    <div class="card-wrapper">
+                        <div class="text-wrapper">
+                            
+                            <ul class="list mbr-fonts-style display-7">
+                                <li class="mbr-text item-wrap">
+                                Phone:                                
+                                <a href="tel:123-456-7890" class="text-black">123-456-7890</a></li>
+
+                                <li class="mbr-text item-wrap">WhatsApp: 
+                                <a href="tel:123-456-7890" class="text-black">123-456-7890</a></li> 
+
+                                <li class="mbr-text item-wrap">                            
+                                Email:
+                                <a href="mailto:info@agriccoop.com" class="text-black">info@agriccoop.com</a>                        
+                                </li>
+
+                                <li class="mbr-text item-wrap">                        
+                                Location:
+                                Nigeria
+                                </li>
+
+                                <li class="mbr-text item-wrap">
+                                Opening Hours:
+                                Mon-Fri: 9am-5pm
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="map-wrapper col-md-12 col-lg-6">
+                    <div class="google-map"><iframe frameborder="0" style="border:0" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6045.3003145248895!2d-73.9884657!3d40.7477229!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a9ac1f1b85%3A0x7e33d1c0e7af3be4!2zMzUwIDV0aCBBdmUsIE5ldyBZb3JrLCBOWSAxMDExOCwg0KHQqNCQ!5e0!3m2!1sru!2sru!4v1689597362021!5m2!1sen!2sen" allowfullscreen=""></iframe></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<section data-bs-version="5.1" class="footer3 cid-ug3d4KC8Li" once="footers" id="footer-3-ug3d4KC8Li">
+
+        
+
+    
+
+    <div class="container">
+        <div class="row">
+            <div class="row-links">
+                <ul class="header-menu">
+                  
+                  
+                  
+                  
+                <li class="header-menu-item mbr-fonts-style display-5">
+                    <a href="#" class="text-white">Home</a>
+                  </li><li class="header-menu-item mbr-fonts-style display-5">
+                    <a href="#" class="text-white">Membership</a>
+                  </li><li class="header-menu-item mbr-fonts-style display-5">
+                    <a href="#" class="text-white">Shop</a>
+                  </li><li class="header-menu-item mbr-fonts-style display-5">
+                    <a href="#" class="text-white">About</a>
+                  </li></ul>
+              </div>
+
+            <div class="col-12 mt-4">
+                <div class="social-row">
+                    <div class="soc-item">
+                        <a href="/" target="_blank">
+                            <span class="mbr-iconfont socicon socicon-facebook display-7"></span>
+                        </a>
+                    </div>
+                    <div class="soc-item">
+                        <a href="/" target="_blank">
+                            <span class="mbr-iconfont socicon-twitter socicon"></span>
+                        </a>
+                    </div>
+                    <div class="soc-item">
+                        <a href="/" target="_blank">
+                            <span class="mbr-iconfont socicon-instagram socicon"></span>
+                        </a>
+                    </div>
+                    <div class="soc-item">
+                        <a href="/" target="_blank">
+                            <span class="mbr-iconfont socicon socicon-linkedin"></span>
+                        </a>
+                    </div>
+                    <div class="soc-item">
+                        <a href="/" target="_blank">
+                            <span class="mbr-iconfont socicon socicon-twitch"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-5">
+                <p class="mbr-fonts-style copyright display-7">© 2024 Delainah Optimah. All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</section>
+<script src="{% static 'mobirise/web/assets/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'mobirise/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'mobirise/parallax/jarallax.js' %}"></script>
+<script src="{% static 'mobirise/smoothscroll/smooth-scroll.js' %}"></script>
+<script src="{% static 'mobirise/ytplayer/index.js' %}"></script>
+<script src="{% static 'mobirise/dropdown/js/navbar-dropdown.js' %}"></script>
+<script src="{% static 'mobirise/vimeoplayer/player.js' %}"></script>
+<script src="{% static 'mobirise/scrollgallery/scroll-gallery.js' %}"></script>
+<script src="{% static 'mobirise/masonry/masonry.pkgd.min.js' %}"></script>
+<script src="{% static 'mobirise/imagesloaded/imagesloaded.pkgd.min.js' %}"></script>
+<script src="{% static 'mobirise/embla/embla.min.js' %}"></script>
+<script src="{% static 'mobirise/embla/script.js' %}"></script>
+<script src="{% static 'mobirise/mbr-switch-arrow/mbr-switch-arrow.js' %}"></script>
+<script src="{% static 'mobirise/theme/js/script.js' %}"></script>
+<script src="{% static 'mobirise/formoid/formoid.min.js' %}"></script>
+
+
+
+</body>
+</html>

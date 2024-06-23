@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.models import User
-from .forms import SignUpForm, InvestmentForm, ROIForm, MemberForm, WithdrawalRequestForm
+from .forms import SignUpForm, InvestmentForm, ROIForm, MemberForm, WithdrawalRequestForm,LoginForm
 from .models import Members, Investment, MonthlyROI, WithdrawalRequest
 from django.core.mail import send_mail
 from paystackapi.paystack import Paystack
@@ -13,6 +13,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 import json
+from multivestshop.views import is_member
+
 paystack_secret_key = 'your_paystack_secret_key'
 paystack = Paystack(secret_key=paystack_secret_key)
 
@@ -21,16 +23,22 @@ def signup(request):
         form = SignUpForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            username = form.cleaned_data['username']
+            email = form.cleaned_data['email']
+            password1 = form.cleaned_data['password1']
+            password2 = form.cleaned_data['password2']
+            user.save()
             code = str(user.id)+user.username+user.email[:user.email.index('@')]
             Members.objects.create(email=user.email,first_name=user.first_name,last_name=user.last_name,code=code)
-            user.save()
-            login(request,user)
-            return redirect('investment')
+            user = authenticate(request,username=username,password=password1)
+            if user is not None:
+                login(request,user)
+                return redirect('investmeapp:investment')
     else:
         form = SignUpForm()
-    return render(request, 'investMeapp/signup.html', {'form': form})
+    return render(request, 'investMe/signup.html', {'form': form,})
 
-@login_required
+@login_required()
 def investment(request):
     member = Members.objects.get(email=request.user.email)
     investments = Investment.objects.filter(member=member)
@@ -43,16 +51,16 @@ def investment(request):
             investment.member = member
             investment.initial_amount = investment.amount
             investment.save()
-            return redirect('investment')
+            return redirect('investmeapp:investment')
     else:
         form = InvestmentForm()
 
-    return render(request, 'investMeapp/investment.html', {'form': form, 'investments': investments, 'rois': rois})
+    return render(request, 'investMe/investment.html', {'form': form, 'investments': investments, 'rois': rois, 'is_member' : is_member(request)})
 
 @login_required
 def profile(request):
     member = Members.objects.get(email=request.user.email)
-    return render(request, 'profile.html', {'member': member})
+    return render(request, 'investMe/profile.html', {'member': member, 'is_member' : is_member(request)})
 
 @login_required
 def update_profile(request):
@@ -61,10 +69,10 @@ def update_profile(request):
         form = MemberForm(request.POST, request.FILES, instance=member)
         if form.is_valid():
             form.save()
-            return redirect('profile')
+            return redirect('investmeapp:profile')
     else:
         form = MemberForm(instance=member)
-    return render(request, 'update_profile.html', {'form': form})
+    return render(request, 'investMe/update_profile.html', {'form': form, 'is_member' : is_member(request)})
 
 @login_required
 def request_withdrawal(request):
@@ -81,21 +89,21 @@ def request_withdrawal(request):
                 'from@example.com',
                 ['admin@example.com'],
             )
-            return redirect('investment')
+            return redirect('investmeapp:investment')
     else:
         form = WithdrawalRequestForm()
-    return render(request, 'request_withdrawal.html', {'form': form})
+    return render(request, 'investMe/request_withdrawal.html', {'form': form,'is_member' : is_member(request)})
 
 @user_passes_test(lambda u: u.is_superuser)
 def manage_members(request):
     members = Members.objects.all()
-    return render(request, 'manage_members.html', {'members': members})
+    return render(request, 'investMe/manage_members.html', {'members': members})
 
 @user_passes_test(lambda u: u.is_superuser)
 def delete_member(request, member_id):
     member = Members.objects.get(id=member_id)
     member.delete()
-    return redirect('manage_members')
+    return redirect('investmeapp:manage_members')
 
 @user_passes_test(lambda u: u.is_superuser)
 def update_investment(request, investment_id):
@@ -104,10 +112,10 @@ def update_investment(request, investment_id):
         form = InvestmentForm(request.POST, instance=investment)
         if form.is_valid():
             form.save()
-            return redirect('manage_members')
+            return redirect('investmeapp:manage_members')
     else:
         form = InvestmentForm(instance=investment)
-    return render(request, 'update_investment.html', {'form': form})
+    return render(request, 'investMe/update_investment.html', {'form': form})
 
 @user_passes_test(lambda u: u.is_superuser)
 def update_roi(request):
@@ -122,15 +130,15 @@ def update_roi(request):
                     month=roi.month,
                     defaults={'roi': roi.roi}
                 )
-            return redirect('manage_members')
+            return redirect('investmeapp:manage_members')
     else:
         form = ROIForm()
-    return render(request, 'update_roi.html', {'form': form})
+    return render(request, 'investMe/update_roi.html', {'form': form})
 
 @user_passes_test(lambda u: u.is_superuser)
 def manage_withdrawals(request):
     withdrawals = WithdrawalRequest.objects.filter(approved=False)
-    return render(request, 'manage_withdrawals.html', {'withdrawals': withdrawals})
+    return render(request, 'investMe/manage_withdrawals.html', {'withdrawals': withdrawals})
 
 @user_passes_test(lambda u: u.is_superuser)
 def approve_withdrawal(request, withdrawal_id):
@@ -139,7 +147,7 @@ def approve_withdrawal(request, withdrawal_id):
     withdrawal.save()
     # Integrate Paystack payment to send money to member's bank account
     send_money_to_bank_account(withdrawal)
-    return redirect('manage_withdrawals')
+    return redirect('investmeapp:manage_withdrawals')
 
 def send_money_to_bank_account(withdrawal):
     member = withdrawal.member
