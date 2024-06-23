@@ -50,14 +50,14 @@
                             <div class="input-group quantity mt-4" style="width: 100px;">
                                 <div class="input-group-btn">
                                     <a class="btn btn-sm btn-plus rounded-circle bg-light border" href="{% url 'multivestshop:remove-single-item-from-cart' order_item.item.slug %}">
-                                    <i class="fa fa-minus fa-2x"></i>
+                                    <i class="fa fa-minus"></i>
                                     </a>
                                 </div>
                                 <input type="text" class="form-control form-control-sm text-center border-0" value="{{ order_item.quantity }}">
                                 
                                 <div class="input-group-btn">
                                     <a class="btn btn-sm btn-plus rounded-circle bg-light border" href="{% url 'multivestshop:add-to-cart' order_item.item.slug %}">
-                                        <i class="fa fa-plus fa-2x"></i>
+                                        <i class="fa fa-plus"></i>
                                     </a>
                                 </div>
                             </div>
