@@ -145,12 +145,10 @@ class Order(models.Model):
     '''
 
     def __str__(self):
-        return self.user.username
+        return f"{self.user.username} - {self.ref_code}"
 
     def get_total(self):
-        total = 0
-        for order_item in self.items.all():
-            total += order_item.get_final_price()
+        total = sum(order_item.get_final_price() for order_item in self.items.all())
         if self.coupon:
             total -= self.coupon.amount
         return total

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+ <main>
+    <!-- Fruits Shop Start-->
+    <div class="container-fluid page-header py-5"></div>
+    <div class="container py-5">
+        <h1>Your Orders</h1>
+        <div class="card">
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Reference Code</th>
+                            <th>Total</th>
+                            <th>Ordered Date</th>
+                            <th>Ordered Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td scope="row"><p class="mb-0 mt-4"><a href="{% url 'multivestshop:order_detail' order.ref_code %}">{{ order.ref_code }}</a></p></td>
+                                <td><p class="mb-0 mt-4">{{ order.get_total }} USD</p></td>
+                                <td><p class="mb-0 mt-4">{{ order.ordered_date }}</p></td>
+                                {% if order.ordered %}
+                                <td><p class="mb-0 mt-4">Order Made</p></td>
+                                {% elif order.being_delivered %}
+                                <td><p class="mb-0 mt-4">On the way</p></td>
+                                {% elif order.received %}
+                                <td><p class="mb-0 mt-4">Fulfilled</p></td>
+                                {% endif %}
+
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">You have no orders.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+
+{% endblock content %}

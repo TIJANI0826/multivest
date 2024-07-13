@@ -1,0 +1,25 @@
+<div class="tab-pane fade pt-3" id="add-investment">
+    <!-- Change Password Form -->
+    <form id="addInvestment" method="post" enctype="multipart/form-data">
+      {% csrf_token %} 
+
+      <div class="row mb-3">
+        <label for="id_amount" class="col-md-4 col-lg-3 col-form-label">Amount</label>
+        <div class="col-md-8 col-lg-9">
+          <input name="amount" type="number" step="0.01" class="form-control" id="id_amount" required>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="id_description" class="col-md-4 col-lg-3 col-form-label">Description</label>
+        <div class="col-md-8 col-lg-9">
+          <textarea name="description" class="form-control" cols="40" rows="10" id="id_description"></textarea>
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Add Investment</button>
+      </div>
+    </form><!-- End Change Password Form -->
+
+  </div>

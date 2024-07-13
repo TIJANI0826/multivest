@@ -10,7 +10,9 @@ from .views import (
     remove_single_item_from_cart,
     PaymentView,
     AddCouponView,
-    RequestRefundView,signup,initialize_payment,payment_callback,paystack_webhook
+    RequestRefundView,signup,initialize_payment,payment_callback,paystack_webhook,
+    order_detail,
+    order_list
 )
 
 app_name = 'multivestshop'
@@ -29,5 +31,7 @@ urlpatterns = [
     path('payment/<payment_option>/', PaymentView.as_view(), name='payment'),
     path('request-refund/', RequestRefundView.as_view(), name='request-refund'),
     path('initialize_payment/', initialize_payment, name='initialize_payment'),
-    path('payment_callback/', payment_callback, name='payment_callback')
+    path('payment_callback/', payment_callback, name='payment_callback'),
+     path('orders/', order_list, name='order_list'),
+    path('orders/<str:ref_code>/', order_detail, name='order_detail'),
 ]

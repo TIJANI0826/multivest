@@ -1,0 +1,95 @@
+<div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+    <!-- Profile Edit Form -->
+    <form id="profileForm" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="row mb-3">
+        <label for="id_image_path" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
+        <div class="col-md-8 col-lg-9">
+          <input type="file" name="image_path" accept="image/*" id="id_image_path">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="id_code"  class="col-md-4 col-lg-3 col-form-label">Code</label>
+        <div class="col-md-8 col-lg-9">
+          <input type="text" name="code" value="{{ member.code }}" maxlength="250" required id="id_code" class="form-control">
+        </div>
+      </div>
+    
+
+      <div class="row mb-3">
+        <label for="id_first_name" class="col-md-4 col-lg-3 col-form-label">First Name</label>
+        <div class="col-md-8 col-lg-9">
+          <input name="first_name" type="text" class="form-control" maxlength="250" value="{{ member.first_name }}" required id="id_first_name">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="id_middle_name" class="col-md-4 col-lg-3 col-form-label">Middle Name</label>
+        <div class="col-md-8 col-lg-9">
+          <input name="middle_name" type="text" class="form-control" id="id_middle_name" value="{{ member.middle_name }}" required>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="id_last_name" class="col-md-4 col-lg-3 col-form-label">Last Name</label>
+        <div class="col-md-8 col-lg-9">
+          <input name="last_name" type="text" class="form-control" id="id_last_name" value="{{ member.last_name }}" required>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="id_gender" class="col-md-4 col-lg-3 col-form-label">Gender</label>
+        <div class="col-md-8 col-lg-9">
+          <select name="gender" id="id_gender" class="form-control">
+            <option value="Male" selected>Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="row mb-3">
+        <label for="id_contact" class="col-md-4 col-lg-3 col-form-label">Contact</label>
+        <div class="col-md-8 col-lg-9">
+          <input type="text" name="contact" class="form-control" value="{{ member.contact }}" maxlength="250" required id="id_contact">
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <label for="id_email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+        <div class="col-md-8 col-lg-9">
+          <input type="email" name="email" class="form-control" value="{{ member.email }}" maxlength="250" required id="id_email">
+        </div>
+      </div>
+    
+      
+      <div class="row mb-3">
+        <label for="id_address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+        <div class="col-md-8 col-lg-9">
+          <textarea name="address" cols="40" rows="10" id="id_address" class="form-control" value="{{ member.address }}"></textarea>
+        </div>
+      </div>
+    
+      <div class="row mb-3">
+        <label for="id_bank_account" class="col-md-4 col-lg-3 col-form-label">Bank account:</label>
+        <div class="col-md-8 col-lg-9">
+          <input type="text" name="bank_account" class="form-control" maxlength="250" id="id_bank_account" value="{{ member.bank_account }}">
+        </div>
+      </div>
+      
+      <div class="row mb-3">
+        <label for="id_bank_name" class="col-md-4 col-lg-3 col-form-label">Bank name:</label>
+        <div class="col-md-8 col-lg-9">
+          <input type="text" name="bank_name" class="form-control" maxlength="250" id="id_bank_name" value="{{ member.bank_name }}">
+        </div>
+      </div>
+
+      
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </div>
+    </form><!-- End Profile Edit Form -->
+
+  </div>

@@ -1,0 +1,31 @@
+{% block extra_scripts %}
+<script>
+        $(document).ready(function(){
+            $('#profileForm').on('submit', function(e){
+                e.preventDefault();
+
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'investmeapp:update_profile' %}",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(response){
+                        alert(response.message);
+                        // Optionally, you can redirect or update the page here
+                    },
+                    error: function(xhr){
+                        var errors = xhr.responseJSON.errors;
+                        var errorText = '';
+                        for (var key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                errorText += errors[key] + '\n';
+                            }
+                        }
+                        alert(errorText);
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock extra_scripts %}

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<main>
+    <!-- Fruits Shop Start-->
+    <div class="container-fluid page-header py-5"></div>
+    <div class="container py-5">
+        <h1>Order Detail: {{ order.ref_code }}</h1>
+        <p>Total: {{ order.get_total }} USD</p>
+        <p>Ordered Date: {{ order.ordered_date }}</p>
+        <h2>Items</h2>
+        <div class="card">
+            <div class="card-body">
+                <!-- Table with hoverable rows -->
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.items.all %}
+                            <tr>
+                                <td scope="row">
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{ item.item.image.url }}" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">
+                                    </div>
+                                </td>
+                                <td><p class="mb-0 mt-4">{{ item.item.title }}</p></td>
+                                <td><p class="mb-0 mt-4">{{ item.quantity }}</p></td>
+                                <td><p class="mb-0 mt-4">{{ item.item.price }}</p></td>
+                                <td><p class="mb-0 mt-4">{{ item.get_final_price }}</p></td>
+                                
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <a href="{% url 'multivestshop:order_list' %}">Back to Orders</a>
+    </div>
+</main>
+{% endblock content %}
+

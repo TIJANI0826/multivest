@@ -18,5 +18,6 @@ urlpatterns = [
     path('manage_withdrawals/', views.manage_withdrawals, name='manage_withdrawals'),
     path('approve_withdrawal/<int:withdrawal_id>/', views.approve_withdrawal, name='approve_withdrawal'),
     path('paystack-webhook/', views.paystack_webhook, name='paystack_webhook'),
-
+    path('members/add/', views.MemberCreateView.as_view(), name='member-add'),
+    path('change_password/', views.change_password, name='change_password'),
 ]

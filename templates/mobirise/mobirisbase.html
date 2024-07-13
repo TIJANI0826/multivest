@@ -23,9 +23,36 @@
   <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;700&display=swap&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
   <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;700&display=swap&display=swap"></noscript>
   <link rel="stylesheet" href="{% static 'mobirise/css/mbr-additional.css' %}" type="text/css">
+  
+  <link href="{% static 'bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'simple-datatables/style.css' %}" rel="stylesheet">
+  
   <!-- Icon Font Stylesheet -->
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
+
+
+        <!-- Libraries Stylesheet -->
+        <link href="{% static 'lib/lightbox/css/lightbox.min.css' %}" rel="stylesheet">
+        <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <!-- <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet"> -->
+
+        <!-- Template Stylesheet -->
+        <link href="{% static 'css/style.css' %}" rel="stylesheet">
+       
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <body>
     <section data-bs-version="5.1" class="menu menu2 cid-ug3d4KuDco" once="menu" id="menu-5-ug3d4KuDco">
@@ -39,7 +66,7 @@
                             <img src="{% static 'mobirise/images/delainah.png' %}" alt="Mobirise Website Builder" style="height: 4.3rem;">
                         </a>
                     </span>
-                    <span class="navbar-caption-wrap"><a class="navbar-caption text-black display-4" href="/">Delainah Optimah</a></span>
+                    <span class="navbar-caption-wrap"><a class="navbar-caption text-black" href="/">Delainah Optimah</a></span>
                 </div>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
                     <div class="hamburger">
@@ -53,43 +80,43 @@
                     <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true">
                         {% if request.user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link link text-black display-4" href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
+                                <a class="nav-link link text-black " href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link link text-black display-4" href="{% url 'investmeapp:profile' %}">Profile</a>
+                                <a class="nav-link link text-black " href="{% url 'investmeapp:profile' %}">Profile</a>
                             </li>
                             <li>
-                                <a href="{% url 'multivestshop:order-summary' %}" class="nav-link link text-black display-4 position-relative me-4 my-auto">
+                                <a href="{% url 'multivestshop:order-summary' %}" class="nav-link link text-black position-relative me-4 my-auto">
                                     <i class="fa fa-shopping-bag fa-2x"></i>
                                     <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">{{ request.user|cart_item_count }}</span>
                                 </a>
                             </li>
                         
                             <li class="nav-item">
-                                <a class="nav-link link text-black display-4" href="{% url 'account_logout' %}">Log out</a>
+                                <a class="nav-link link text-black " href="{% url 'account_logout' %}">Log out</a>
                             </li>
                             {% if is_member %}
                             <li class="nav-item">
-                                <a class="nav-link link text-black display-4" href="{% url 'investmeapp:investment' %}">Membership</a>
+                                <a class="nav-link link text-black " href="{% url 'investmeapp:investment' %}">Membership</a>
                             </li>
                             {% else %}
                             <li class="nav-item">
-                                <a class="nav-link link text-black display-4" href="{% url 'investmeapp:signup' %}">Become a member</a>
+                                <a class="nav-link link text-black " href="{% url 'investmeapp:signup' %}">Become a member</a>
                             </li>
                             {% endif %}
                                            
                         {% else %}
                         <li class="nav-item">
-                            <a class="nav-link link text-black display-4" href="{% url 'investmeapp:investment' %}">Membership</a>
+                            <a class="nav-link link text-black " href="{% url 'investmeapp:investment' %}">Membership</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link link text-black display-4" href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
+                            <a class="nav-link link text-black " href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link link text-black display-4" href="/">Events</a>
+                            <a class="nav-link link text-black " href="/">Events</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link link text-black display-4" href="{% url 'account_login' %}">Sign in</a>
+                            <a class="nav-link link text-black " href="{% url 'account_login' %}">Sign in</a>
                         </li>
                         
                         {% endif %}
@@ -99,7 +126,7 @@
                     
                     {% else %}
                     <div class="navbar-buttons mbr-section-btn">
-                        <a class="btn btn-primary display-4" href="{% url 'investmeapp:signup' %}">Join Now</a>
+                        <a class="btn btn-primary " href="{% url 'investmeapp:signup' %}">Join Now</a>
                     </div>
                     {% endif %}
                 </div>
@@ -222,7 +249,7 @@
         </div>
     </div>
 </section>
-<script src="{% static 'mobirise/web/assets/jquery/jquery.min.js' %}"></script>
+<!-- <script src="{% static 'mobirise/web/assets/jquery/jquery.min.js' %}"></script>
 <script src="{% static 'mobirise/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 <script src="{% static 'mobirise/parallax/jarallax.js' %}"></script>
 <script src="{% static 'mobirise/smoothscroll/smooth-scroll.js' %}"></script>
@@ -236,7 +263,25 @@
 <script src="{% static 'mobirise/embla/script.js' %}"></script>
 <script src="{% static 'mobirise/mbr-switch-arrow/mbr-switch-arrow.js' %}"></script>
 <script src="{% static 'mobirise/theme/js/script.js' %}"></script>
-<script src="{% static 'mobirise/formoid/formoid.min.js' %}"></script>
+<script src="{% static 'mobirise/formoid/formoid.min.js' %}"></script> -->
+
+ <!-- JavaScript Libraries -->
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+ <script src="{% static 'lib/easing/easing.min.js' %}"></script>
+ <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
+ <script src="{% static 'lib/lightbox/js/lightbox.min.js' %}"></script>
+ <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+
+ <script src="{% static 'apexcharts/apexcharts.min.js' %}"></script>
+<script src="{% static 'chart.js/chart.umd.js' %}"></script>
+<script src="{% static 'echarts/echarts.min.js' %}"></script>
+<script src="{% static 'quill/quill.js' %}"></script>
+<script src="{% static 'simple-datatables/simple-datatables.js' %}"></script>
+<script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+
+ <!-- Template Javascript -->
+ <script src="{% static 'js/main.js' %}"></script>
 
 
 

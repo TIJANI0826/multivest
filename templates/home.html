@@ -1,136 +1,122 @@
-{% extends 'mobirise/mobirisbase.html' %}
+{% extends 'base.html' %}
 {% load static %}
 {% block content %}
+
 <main>
-  
-      <!-- Fruits Shop Start-->
-  
-     
-        <div class="container-fluid page-header py-5"></div>
-        <div class="container">
-          <div class="row justify-content-center">
-              {% for message in messages %}
-                  <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-                    {{ message }}
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                {% endfor %}
+  <!-- Fruits Shop Start-->
+  <div class="container-fluid page-header py-5"></div>
+  <div class="container py-5">
+    <div class="row g-4">
+      <div class="col-lg-12">
+        <div class="row g-4">
+          <div class="col-xl-3">
+            <div class="input-group w-100 mx-auto d-flex">
+              <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
+              <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
+            </div>
           </div>
-      </div>
-        <div class="container py-5">
-          <div class="row g-4">
-            <div class="col-lg-12">
-              <div class="row g-4">
-                <div class="col-xl-3">
-                  <div class="input-group w-100 mx-auto d-flex">
-                    <input type="search" class="form-control p-3" placeholder="keywords" aria-describedby="search-icon-1">
-                    <span id="search-icon-1" class="input-group-text p-3"><i class="fa fa-search"></i></span>
-                  </div>
-                </div>
-                <div class="col-6"></div>
-                <div class="col-xl-3">
-                  <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
-                    <label for="fruits">Default Sorting:</label>
-                    <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
-                      <option value="volvo">Nothing</option>
-                      <option value="saab">Popularity</option>
-                      <option value="opel">Organic</option>
-                      <option value="audi">Fantastic</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-  
-              <div class="row g-4">
-
-                <div class="col-lg-3">
-                  <div class="row g-4">
-  
-                    <div class="col-lg-12">
-                      <div class="mb-3">
-                        <h4 class="mb-2">Price</h4>
-                        <input type="range" class="form-range w-100" id="rangeInput" name="rangeInput" min="0" max="500"
-                          value="0" oninput="amount.value=rangeInput.value">
-                        <output id="amount" name="amount" min-velue="0" max-value="500" for="rangeInput">0</output>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-lg-9">
-                  <div class="row g-4 justify-content-center">
-                    {% for item in object_list %}
-                    <div class="col-md-6 col-lg-6 col-xl-4">
-                      <div class="rounded position-relative fruite-item">
-                        <div class="fruite-img">
-                          <img src="{{ item.image.url }}" class="img-fluid w-100 rounded-top" alt="">
-                        </div>
-                        {% for category in item.category.all %}
-                        <div class="text-white bg-secondary px-3 py-1 rounded position-absolute"
-                          style="top: 10px; left: 10px;">{{ category }}</div>
-                        {% endfor %}
-                        <div class="p-4 border border-secondary border-top-0 rounded-bottom">
-                            <h4>{{ item.title }}</h4>
-                            <p>{{ item.description }}</p>
-                            <div class="d-flex justify-content-between flex-lg-wrap">
-                                {% if item.discount_price %}
-                                <h5 class="text-dark fs-5 fw-bold mb-0">
-                                      <del>${{ item.price }}</del> / kg
-                                </h5>
-                                <h5 class="text-dark fs-5 fw-bold mb-0">
-                                  ${{ item.discount_price }} / kg
-                                </h5>
-                                {% else %}
-                                <p class="text-dark fs-5 fw-bold mb-0">
-                                  ${{ item.price }} / kg
-                                </p> 
-                                {% endif %}
-                                <a href="{{ item.get_absolute_url }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i
-                                class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a>
-                            </div>
-                        </div>
-                      </div>
-                    </div>
-                    {% endfor %}
-                    <div class="col-12">
-                      <div class="pagination d-flex justify-content-center mt-5">
-  
-                        {% if is_paginated %}
-  
-                        {% if page_obj.has_previous %}
-                        <a class=" page-item page-link rounded" href="?page={{ page_obj.previous_page_number }}"
-                          aria-label="Previous">
-                          <span aria-hidden="true">&laquo;</span>
-                          <span class="sr-only">Previous</span>
-                        </a>
-                        {% endif %}
-  
-                        <a class="page-link page-item active rounded" href="?page={{ page_obj.number }}">{{
-                          page_obj.number
-                          }}
-                          <span class="sr-only">(current)</span>
-                        </a>
-                        {% if page_obj.has_next %}
-                        <a class="page-link page-item rounded" href="?page={{ page_obj.next_page_number }}"
-                          aria-label="Next">
-                          <span aria-hidden="true">&raquo;</span>
-                          <span class="sr-only">Next</span>
-                        </a>
-                        {% endif %}
-                        {% endif %}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-  
-  
+          <div class="col-6"></div>
+          <div class="col-xl-3">
+            <div class="bg-light ps-3 py-3 rounded d-flex justify-content-between mb-4">
+              <label for="fruits">Default Sorting:</label>
+              <select id="fruits" name="fruitlist" class="border-0 form-select-sm bg-light me-3" form="fruitform">
+                <option value="volvo">Nothing</option>
+                <option value="saab">Popularity</option>
+                <option value="opel">Organic</option>
+                <option value="audi">Fantastic</option>
+              </select>
             </div>
           </div>
         </div>
+
+        <div class="row g-4">
+
+          <div class="col-lg-3">
+            <div class="row g-4">
+
+              <div class="col-lg-12">
+                <div class="mb-3">
+                  <h4 class="mb-2">Price</h4>
+                  <input type="range" class="form-range w-100" id="rangeInput" name="rangeInput" min="0" max="500"
+                    value="0" oninput="amount.value=rangeInput.value">
+                  <output id="amount" name="amount" min-velue="0" max-value="500" for="rangeInput">0</output>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-9">
+            <div class="row g-4 justify-content-center">
+              {% for item in object_list %}
+              <div class="col-md-6 col-lg-6 col-xl-4">
+                <div class="rounded position-relative fruite-item">
+                  <div class="fruite-img">
+                    <img src="{{ item.image.url }}" class="img-fluid w-100 rounded-top" alt="">
+                  </div>
+                  {% for category in item.category.all %}
+                  <div class="text-white bg-secondary px-3 py-1 rounded position-absolute"
+                    style="top: 10px; left: 10px;">{{ category }}</div>
+                  {% endfor %}
+                  <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                      <h4>{{ item.title }}</h4>
+                      <p>{{ item.description }}</p>
+                      <div class="d-flex justify-content-between flex-lg-wrap">
+                          {% if item.discount_price %}
+                          <h5 class="text-dark fs-5 fw-bold mb-0">
+                                <del>${{ item.price }}</del> / kg
+                          </h5>
+                          <h5 class="text-dark fs-5 fw-bold mb-0">
+                            ${{ item.discount_price }} / kg
+                          </h5>
+                          {% else %}
+                          <p class="text-dark fs-5 fw-bold mb-0">
+                            ${{ item.price }} / kg
+                          </p> 
+                          {% endif %}
+                          <a href="{{ item.get_absolute_url }}" class="btn border border-secondary rounded-pill px-3 text-primary"><i
+                          class="fa fa-shopping-bag me-2 text-primary"></i>Buy</a>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              {% endfor %}
+              <div class="col-12">
+                <div class="pagination d-flex justify-content-center mt-5">
+
+                  {% if is_paginated %}
+
+                  {% if page_obj.has_previous %}
+                  <a class=" page-item page-link rounded" href="?page={{ page_obj.previous_page_number }}"
+                    aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                    <span class="sr-only">Previous</span>
+                  </a>
+                  {% endif %}
+
+                  <a class="page-link page-item active rounded" href="?page={{ page_obj.number }}">{{
+                    page_obj.number
+                    }}
+                    <span class="sr-only">(current)</span>
+                  </a>
+                  {% if page_obj.has_next %}
+                  <a class="page-link page-item rounded" href="?page={{ page_obj.next_page_number }}"
+                    aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                    <span class="sr-only">Next</span>
+                  </a>
+                  {% endif %}
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+      </div>
+    </div>
+  </div>
 </main>
   
 {% endblock content %}

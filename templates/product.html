@@ -1,30 +1,14 @@
-{% extends 'mobirise/mobirisbase.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 
   <main class="mt-5 pt-4">
     <div class="container-fluid py-5 mt-5">
-      <div class="container">
-        <div class="row justify-content-center">
-            {% for message in messages %}
-                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-                  {{ message }}
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              {% endfor %}
-        </div>
-      </div>
-
       <!--Grid row-->
       <div class="row wow fadeIn">
-
         <!--Grid column-->
         <div class="col-md-6 mb-4">
-
           <img src="{{ object.image.url }}" class="img-fluid" alt="">
-
         </div>
         <!--Grid column-->
 

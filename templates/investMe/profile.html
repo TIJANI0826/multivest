@@ -1,140 +1,212 @@
-{% extends 'mobirise/mobirisbase.html' %}
+{% extends 'base.html' %}
 {% load crispy_forms_tags %}
+
 {% block content %}
 <main class="py-5">
-    <div class="container-fluid page-header py-5"></div>
-    
-    <div class="container-fluid py-5">
-      <div class="container py-5">        
-          <div class="row g-5">
-            <div class="col-md-12 col-lg-6 col-xl-7">
-                <h2 class="mb-4">Profile</h2>
-                <p>Name: {{ member.name }}</p>
-                <p>Code: {{ member.code }}</p>
-                <p>Gender: {{ member.get_gender_display }}</p>
-                <p>Contact: {{ member.contact }}</p>
-                <p>Email: {{ member.email }}</p>
-                <p>Address: {{ member.address }}</p>
-                <p>Bank Name: {{ member.bank_name }}</p>
-                <p>Bank Account: {{ member.bank_account }}</p>
-                {% if member.image_path %}
-                    <img src="{{ member.image_path.url }}" alt="{{ member.name }}">
-                {% else %}
-                    <p>No image available</p>
-                {% endif %}
-                <a href="{% url 'investmeapp:update_profile' %}">Update Profile</a>
+  
+  <div class="container-fluid py-5">
+  </div>
+  <div class="container py-5">
+    <div class="pagetitle">
+      <h1>Profile</h1>
+      
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+      <div class="row">
+        <div class="col-xl-4">
+
+          <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+              {% if member.image_path %}
+              <img src="{{ member.image_path.url }}" alt="Profile" class="rounded-circle">
+              {% else %}
+              <h6>No Image</h6>
+              {% endif %}
+              <h2>{{ member.name }}</h2>
+              <div class="social-links mt-2">
+                <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+                <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+              </div>
             </div>
+          </div>
+
+        </div>
+
+        <div class="col-xl-8">
+
+          <div class="card">
+            <div class="card-body pt-3">
+              <!-- Bordered Tabs -->
+              <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                  <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings">Settings</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#add-investment">Add Investment</button>
+                </li>
+
+                <li class="nav-item">
+                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#request-withdrawal">Request Withdrawal</button>
+                </li>
+
+              </ul>
+              <div class="tab-content pt-2">
+
+                {% include 'investMe/profile-overview.html' %}
+                {% include 'investMe/profile-edit.html' %}
+                {% include 'investMe/profile-setting.html' %}
+                {% include 'investMe/profile-change-password.html' %}
+                {% include 'investMe/add-investment.html' %}
+                {% include 'investMe/request-withdrawal.html' %}
+
+              </div><!-- End Bordered Tabs -->
+
+            </div>
+          </div>
+
         </div>
       </div>
+    </section>
+  </div>
 </main>
+
 {% endblock content %}
 
-<!-- <p>
-    <label for="id_code">Code:</label>
-    <input type="text" name="code" value="12amrqalb" maxlength="250" required id="id_code">
-    
-    
-  </p>
+{% block extra_scripts %}
+<script>
+        $(document).ready(function(){
+            $('#profileForm').on('submit', function(e){
+                e.preventDefault();
 
-  
-  <p>
-    <label for="id_first_name">First name:</label>
-    <input type="text" name="first_name" value="qa" maxlength="250" required id="id_first_name">
-    
-    
-  </p>
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'investmeapp:update_profile' %}",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function(response){
+                        alert(response.message);
+                        // Optionally, you can redirect or update the page here
+                    },
+                    error: function(xhr){
+                        var errors = xhr.responseJSON.errors;
+                        var errorText = '';
+                        for (var key in errors) {
+                            if (errors.hasOwnProperty(key)) {
+                                errorText += errors[key] + '\n';
+                            }
+                        }
+                        alert(errorText);
+                    }
+                });
+            });
+        });
+    </script>
 
-  
-  <p>
-    <label for="id_middle_name">Middle name:</label>
-    <input type="text" name="middle_name" maxlength="250" id="id_middle_name">
-    
-    
-  </p>
+<script>
+  $(document).ready(function(){
+      $('#passwordChangeForm').on('submit', function(e){
+          e.preventDefault();
 
-  
-  <p>
-    <label for="id_last_name">Last name:</label>
-    <input type="text" name="last_name" value="lb" maxlength="250" required id="id_last_name">
-    
-    
-  </p>
+          $.ajax({
+              type: 'POST',
+              url: "{% url 'investmeapp:change_password' %}",
+              data: new FormData(this),
+              processData: false,
+              contentType: false,
+              success: function(response){
+                  alert(response.message);
+                  // Optionally, you can redirect or update the page here
+              },
+              error: function(xhr){
+                  var errors = xhr.responseJSON.errors;
+                  var errorText = '';
+                  for (var key in errors) {
+                      if (errors.hasOwnProperty(key)) {
+                          errorText += errors[key] + '\n';
+                      }
+                  }
+                  alert(errorText);
+              }
+          });
+      });
+  });
+</script>
 
-  
-  <p>
-    <label for="id_gender">Gender:</label>
-    <select name="gender" id="id_gender">
-  <option value="Male" selected>Male</option>
+<script>
+  $(document).ready(function(){
+      $('#addInvestment').on('submit', function(e){
+          e.preventDefault();
 
-  <option value="Female">Female</option>
+          $.ajax({
+              type: 'POST',
+              url: "{% url 'investmeapp:investment' %}",
+              data: new FormData(this),
+              processData: false,
+              contentType: false,
+              success: function(response){
+                  alert(response.message);
+                  // Optionally, you can redirect or update the page here
+              },
+              error: function(xhr){
+                  var errors = xhr.responseJSON.errors;
+                  var errorText = '';
+                  for (var key in errors) {
+                      if (errors.hasOwnProperty(key)) {
+                          errorText += errors[key] + '\n';
+                      }
+                  }
+                  alert(errorText);
+              }
+          });
+      });
+  });
+</script>
+<script>
+  $(document).ready(function(){
+      $('#requestWithdrawal').on('submit', function(e){
+          e.preventDefault();
 
-</select>
-    
-    
-  </p>
+          $.ajax({
+              type: 'POST',
+              url: "{% url 'investmeapp:request_withdrawal' %}",
+              data: new FormData(this),
+              processData: false,
+              contentType: false,
+              success: function(response){
+                  alert(response.message);
+                  // Optionally, you can redirect or update the page here
+              },
+              error: function(xhr){
+                  var errors = xhr.responseJSON.errors;
+                  var errorText = '';
+                  for (var key in errors) {
+                      if (errors.hasOwnProperty(key)) {
+                          errorText += errors[key] + '\n';
+                      }
+                  }
+                  alert(errorText);
+              }
+          });
+      });
+  });
+</script>
 
-  
-  <p>
-    <label for="id_contact">Contact:</label>
-    <input type="text" name="contact" maxlength="250" required id="id_contact">
-    
-    
-  </p>
-
-  
-  <p>
-    <label for="id_email">Email:</label>
-    <input type="email" name="email" value="qalb@gmail.com" maxlength="250" required id="id_email">
-    
-    
-  </p>
-
-  
-  <p>
-    <label for="id_address">Address:</label>
-    <textarea name="address" cols="40" rows="10" id="id_address">
-</textarea>
-    
-    
-  </p>
-
-  
-  <p>
-    <label for="id_image_path">Image path:</label>
-    <input type="file" name="image_path" accept="image/*" id="id_image_path">
-    
-    
-  </p>
-
-  
-  <p>
-    <label for="id_status">Status:</label>
-    <select name="status" id="id_status">
-  <option value="1" selected>Active</option>
-
-  <option value="2">Inactive</option>
-
-</select>
-    
-    
-  </p>
-
-  
-  <p>
-    <label for="id_bank_account">Bank account:</label>
-    <input type="text" name="bank_account" maxlength="250" id="id_bank_account">
-    
-    
-  </p>
-
-  
-  <p>
-    <label for="id_bank_name">Bank name:</label>
-    <input type="text" name="bank_name" maxlength="250" id="id_bank_name">
-    
-    
-      
-    
-  </p>
-                    <button type="submit">Update</button>
-     -->
+{% endblock extra_scripts %}

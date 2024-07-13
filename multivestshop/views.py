@@ -702,3 +702,13 @@ class RequestRefundView(View):
             except ObjectDoesNotExist:
                 messages.info(self.request, "This order does not exist.")
                 return redirect("multivestshop:request-refund")
+
+@login_required
+def order_list(request):
+    orders = Order.objects.filter(user=request.user, ordered=True)
+    return render(request, 'order_list.html', {'orders': orders})
+
+@login_required
+def order_detail(request, ref_code):
+    order = get_object_or_404(Order, ref_code=ref_code, user=request.user)
+    return render(request, 'order_details.html', {'order': order})

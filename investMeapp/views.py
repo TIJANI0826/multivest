@@ -9,14 +9,22 @@ from paystackapi.paystack import Paystack
 from paystackapi.transaction import Transaction
 from django.conf import settings
 from paystackapi.transfer import Transfer
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 import json
 from multivestshop.views import is_member
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.generic.edit import CreateView
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import PasswordChangeForm
 
 paystack_secret_key = 'your_paystack_secret_key'
 paystack = Paystack(secret_key=paystack_secret_key)
+
+def is_ajax(request):
+  return request.headers.get('x-requested-with') == 'XMLHttpRequest'
 
 def signup(request):
     if request.method == 'POST':
@@ -51,10 +59,16 @@ def investment(request):
             investment.member = member
             investment.initial_amount = investment.amount
             investment.save()
-            return redirect('investmeapp:investment')
+            if is_ajax(request):
+                return JsonResponse({'message': 'Profile updated successfully!'})
+            else:
+                return redirect('investmeapp:profile')
+        else:
+            if is_ajax(request):
+                return JsonResponse({'errors': form.errors}, status=400)
     else:
-        form = InvestmentForm()
-
+        form = InvestmentForm(instance=member)
+    form = InvestmentForm()
     return render(request, 'investMe/investment.html', {'form': form, 'investments': investments, 'rois': rois, 'is_member' : is_member(request)})
 
 @login_required
@@ -69,10 +83,18 @@ def update_profile(request):
         form = MemberForm(request.POST, request.FILES, instance=member)
         if form.is_valid():
             form.save()
-            return redirect('investmeapp:profile')
+            if is_ajax(request):
+                return JsonResponse({'message': 'Profile updated successfully!'})
+            else:
+                return redirect('investmeapp:profile')
+        else:
+            if is_ajax(request):
+                return JsonResponse({'errors': form.errors}, status=400)
     else:
         form = MemberForm(instance=member)
-    return render(request, 'investMe/update_profile.html', {'form': form, 'is_member' : is_member(request)})
+    form = MemberForm()
+    context = {'form': form, 'is_member': is_member(request)}
+    return render(request, 'investMe/update_profile.html', context)
 
 @login_required
 def request_withdrawal(request):
@@ -89,9 +111,16 @@ def request_withdrawal(request):
                 'from@example.com',
                 ['admin@example.com'],
             )
-            return redirect('investmeapp:investment')
+            if is_ajax(request):
+                return JsonResponse({'message': 'Withdrawal request sent successfully!'})
+            else:
+                return redirect('investmeapp:profile')
+        else:
+            if is_ajax(request):
+                return JsonResponse({'errors': form.errors}, status=400)
     else:
-        form = WithdrawalRequestForm()
+        form = WithdrawalRequestForm(instance=member)
+    form = WithdrawalRequestForm()
     return render(request, 'investMe/request_withdrawal.html', {'form': form,'is_member' : is_member(request)})
 
 @user_passes_test(lambda u: u.is_superuser)
@@ -225,3 +254,46 @@ def paystack_webhook(request):
         # Update your database with the transfer success status
         # Example: mark the withdrawal as completed
     return JsonResponse({'status': 'success'})
+
+class MemberCreateView(CreateView):
+    model = Members
+    form_class = MemberForm
+    template_name = 'investMe/update_profile.html'  # Your template file
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse(form.errors, status=400)
+        else:
+            return response
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        if self.request.is_ajax():
+            data = {
+                'message': "Member created successfully!",
+                'member_id': self.object.id,
+            }
+            return JsonResponse(data)
+        else:
+            return response
+
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important to keep the user logged in after password change
+            if is_ajax(request):
+                return JsonResponse({'message': 'Password changed successfully!'})
+            else:
+                return redirect('investmeapp:profile')
+        else:
+            if is_ajax(request):
+                return JsonResponse({'errors': form.errors}, status=400)
+    else:
+        form = PasswordChangeForm(request.user)
+    
+    context = {'form': form}
+    return render(request, 'account/password_change.html', context)

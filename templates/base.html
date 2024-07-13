@@ -1,4 +1,6 @@
 {% load static %}
+{% load cart_template_tags %}
+
 <html lang="en">
 
     <head>
@@ -8,11 +10,33 @@
         <meta content="" name="keywords">
         <meta content="" name="description">
 
+        <link rel="shortcut icon" href="{% static 'mobirise/images/delainah.png' %}" type="image/x-icon">
+        <meta name="description" content="Welcome to our agricultural cooperative website, where members can access exclusive products and services through our online shop.">
+        <title>Agricultural Cooperative Membership</title>
+        <link rel="stylesheet" href="{% static 'mobirise/web/assets/mobirise-icons2/mobirise2.css' %}">
+        <!-- <link rel="stylesheet" href="{% static 'mobirise/bootstrap/css/bootstrap.min.css' %}"> -->
+        <link rel="stylesheet" href="{% static 'mobirise/bootstrap/css/bootstrap-grid.min.css' %}">
+        <link rel="stylesheet" href="{% static 'mobirise/bootstrap/css/bootstrap-reboot.min.css' %}">
+        <link rel="stylesheet" href="{% static 'mobirise/parallax/jarallax.css' %}">
+        <link rel="stylesheet" href="{% static 'mobirise/dropdown/css/style.css' %}">
+        <link rel="stylesheet" href="{% static 'mobirise/socicon/css/styles.css' %}">
+        <!-- <link rel="stylesheet" href="{% static 'mobirise/theme/css/style.css' %}"> -->
+        <!-- <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;700&display=swap&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'"> -->
+        <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;700&display=swap&display=swap"></noscript>
+        <link rel="stylesheet" href="{% static 'mobirise/css/mbr-additional.css' %}" type="text/css">
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css"/>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
         <!-- Google Web Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
 
+        <link href="{% static 'bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+        <link href="{% static 'boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+        <link href="{% static 'quill/quill.snow.css' %}" rel="stylesheet">
+        <link href="{% static 'quill/quill.bubble.css' %}" rel="stylesheet">
+        <link href="{% static 'remixicon/remixicon.css' %}" rel="stylesheet">
+        <link href="{% static 'simple-datatables/style.css' %}" rel="stylesheet">
 
         <!-- Libraries Stylesheet -->
         <link href="{% static 'lib/lightbox/css/lightbox.min.css' %}" rel="stylesheet">
@@ -35,8 +59,88 @@
             <div class="spinner-grow text-primary" role="status"></div>
         </div> -->
         <!-- Spinner End -->
+        
+        <section data-bs-version="5.1" class="menu menu2 cid-ug3d4KuDco" once="menu" id="menu-5-ug3d4KuDco">
+	
 
-        {% include "navbar.html" %}
+            <nav class="navbar navbar-dropdown navbar-fixed-top navbar-expand-lg">
+                <div class="container">
+                    <div class="navbar-brand">
+                        <span class="navbar-logo">
+                            <a href="/">
+                                <img src="{% static 'mobirise/images/delainah.png' %}" alt="Mobirise Website Builder" style="height: 4.3rem;">
+                            </a>
+                        </span>
+                        <span class="navbar-caption-wrap"><a class="navbar-caption text-black" href="/">Delainah Optimah</a></span>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbarSupportedContent" data-bs-target="#navbarSupportedContent" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                        <div class="hamburger">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav nav-dropdown" data-app-modern-menu="true">
+                            {% if request.user.is_authenticated %}
+                                <li class="nav-item">
+                                    <a class="nav-link link text-black " href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link link text-black " href="{% url 'investmeapp:profile' %}">Profile</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'multivestshop:order-summary' %}" class="nav-link link text-black position-relative me-4 my-auto">
+                                        <i class="fa fa-shopping-bag fa-2x"></i>
+                                        <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">{{ request.user|cart_item_count }}</span>
+                                    </a>
+                                </li>
+                            
+                                <li class="nav-item">
+                                    <a class="nav-link link text-black " href="{% url 'account_logout' %}">Log out</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link link text-black position-relative me-4 my-auto" href="{% url 'multivestshop:order_list' %}"><i class="fa-solid fa-truck"></i></a>
+                                </li>
+                                {% if is_member %}
+                                <li class="nav-item">
+                                    <a class="nav-link link text-black " href="{% url 'investmeapp:investment' %}">Membership</a>
+                                </li>
+                                {% else %}
+                                <li class="nav-item">
+                                    <a class="nav-link link text-black " href="{% url 'investmeapp:signup' %}">Become a member</a>
+                                </li>
+                                {% endif %}
+                                               
+                            {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link link text-black " href="{% url 'investmeapp:investment' %}">Membership</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link text-black " href="{% url 'multivestshop:home' %}" aria-expanded="false">Shop</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link text-black " href="/">Events</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link link text-black " href="{% url 'account_login' %}">Sign in</a>
+                            </li>
+                            
+                            {% endif %}
+                        </ul>
+    
+                        {% if is_member %}
+                        
+                        {% else %}
+                        <div class="navbar-buttons mbr-section-btn">
+                            <a class="btn btn-primary " href="{% url 'investmeapp:signup' %}">Join Now</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </nav>
+        </section>
         
 
         <!-- Modal Search Start -->
@@ -171,8 +275,22 @@
     <script src="{% static 'lib/lightbox/js/lightbox.min.js' %}"></script>
     <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
 
+    <script src="{% static 'apexcharts/apexcharts.min.js' %}"></script>
+    <script src="{% static 'chart.js/chart.umd.js' %}"></script>
+    <script src="{% static 'echarts/echarts.min.js' %}"></script>
+    <script src="{% static 'quill/quill.js' %}"></script>
+    <script src="{% static 'simple-datatables/simple-datatables.js' %}"></script>
+    <script src="{% static 'tinymce/tinymce.min.js' %}"></script>
+
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+          {% if messages %}
+            {% for message in messages %}
+                alert("{{ message|escapejs }}");
+            {% endfor %}
+        {% endif %}
+    </script>
 
     
     {% block extra_scripts %}

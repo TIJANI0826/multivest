@@ -26,10 +26,12 @@ class ROIForm(forms.ModelForm):
         model = MonthlyROI
         fields = ['month', 'roi']
 
+
 class MemberForm(forms.ModelForm):
     class Meta:
         model = Members
-        fields = ['code', 'first_name', 'middle_name', 'last_name', 'gender', 'contact', 'email', 'address', 'image_path', 'status', 'bank_account', 'bank_name']
+        fields = '__all__'
+        exclude = ['delete_flag', 'status', 'date_added' ]
 
 class WithdrawalRequestForm(forms.ModelForm):
     class Meta:

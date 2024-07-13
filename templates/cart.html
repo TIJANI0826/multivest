@@ -1,4 +1,4 @@
-{% extends 'mobirise/mobirisbase.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
 
@@ -7,18 +7,6 @@
 
 <!-- Cart Page Start -->
 <div class="container-fluid py-5">
-    <div class="container">
-        <div class="row justify-content-center">
-            {% for message in messages %}
-                <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-                  {{ message }}
-                  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-              {% endfor %}
-        </div>
-    </div>
     <div class="container py-5">
         <div class="table-responsive">
             <table class="table">
@@ -46,17 +34,16 @@
                         <td>
                             <p class="mb-0 mt-4">$ {{ order_item.item.price }}</p>
                         </td>
-                        <td>
+                        <td>                            
                             <div class="input-group quantity mt-4" style="width: 100px;">
                                 <div class="input-group-btn">
                                     <a class="btn btn-sm btn-plus rounded-circle bg-light border" href="{% url 'multivestshop:remove-single-item-from-cart' order_item.item.slug %}">
-                                    <i class="fa fa-minus"></i>
+                                        <i class="fa fa-minus"></i>
                                     </a>
                                 </div>
-                                <input type="text" class="form-control form-control-sm text-center border-0" value="{{ order_item.quantity }}">
-                                
+                                <input type="text" class="form-control form-control-sm text-center" value="{{ order_item.quantity }}" disabled>
                                 <div class="input-group-btn">
-                                    <a class="btn btn-sm btn-plus rounded-circle bg-light border" href="{% url 'multivestshop:add-to-cart' order_item.item.slug %}">
+                                    <a class="btn btn-sm btn-plus rounded-circle bg-light border " href="{% url 'multivestshop:add-to-cart' order_item.item.slug %}">
                                         <i class="fa fa-plus"></i>
                                     </a>
                                 </div>
